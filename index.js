@@ -3,6 +3,9 @@ const path = require("path");
 const WebSocket = require("ws");
 var http = require("http");
 
+
+
+// ===================================inject===================================
 var originHTML = fs.readFileSync("test.html", "utf8");
 
 var INJECTED_CODE = fs.readFileSync(
@@ -35,6 +38,7 @@ const injectWebsocket = (originHTML, injectHTML) => {
   }
 
   // replace
+  // TODO: another way, 自己都看不下去的代码
   if (injectTag) {
     return (
       originHTML.split(injectTag)[0] +
@@ -50,6 +54,13 @@ const injectWebsocket = (originHTML, injectHTML) => {
   return originHTML;
 };
 
+// ===============================listen file change=============================
+// TODO: how do I restart the http server???
+
+
+// =============================server=======================================
+
+// http
 http
   .createServer(function (req, res) {
     res.writeHead(200, { "Content-Type": "html" });
@@ -59,8 +70,11 @@ http
     console.log("I'm listening...");
   });
 
-const wss = new WebSocket.Server({ port: 8080 });
 
+// websocket
+// TODO: how do i know websocket port in injectedhtml
+// or can port adjust default?
+const wss = new WebSocket.Server({ port: 8080 });
 wss.on("connection", (ws) => {
   ws.on("message", (message) => {
     console.log(`Received message => ${message}`);
