@@ -1,8 +1,9 @@
 const fs = require("fs");
 const path = require("path");
+const WebSocket = require("ws");
 var http = require("http");
 
-var originHTML = fs.readFileSync("test.html", 'utf8');
+var originHTML = fs.readFileSync("test.html", "utf8");
 
 var INJECTED_CODE = fs.readFileSync(
   path.join(__dirname, "injected.html"),
@@ -52,9 +53,20 @@ const injectWebsocket = (originHTML, injectHTML) => {
 http
   .createServer(function (req, res) {
     res.writeHead(200, { "Content-Type": "html" });
-    console.log(originHTML.split('</body>'))
     res.end(injectWebsocket(originHTML, INJECTED_CODE));
   })
-  .listen(9615, () => {
+  .listen(3000, () => {
     console.log("I'm listening...");
   });
+
+const wss = new WebSocket.Server({ port: 8080 });
+
+wss.on("connection", (ws) => {
+  ws.on("message", (message) => {
+    console.log(`Received message => ${message}`);
+  });
+  ws.send("ho!");
+  ws.on("close", (c, d) => {
+    console.log("disconnect " + c + " -- " + d);
+  });
+});
