@@ -1,5 +1,16 @@
 <!-- 为了实现server和html的通信，inject websocket -->
 <!-- 也是惊讶地发现，svg里可以嵌入script标签 -->
 <script type="text/javascript">
-    console.log(123)
+  // window.location.reload, doesn't know how to refresh css only
+  const adress =
+    window.location.protocol +
+    window.location.host +
+    window.location.port +
+    "/ws";
+  const socket = new WebSocket(adress);
+  socket.onmessage = function (msg) {
+    if (msg.data == "reload") window.location.reload();
+    else if (msg.data == "refreshcss") refreshCSS();
+  };
+  console.log("Live reload enabled.");
 </script>
