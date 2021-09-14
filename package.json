@@ -1,0 +1,8 @@
+{
+  "name": "fake-live-server",
+  "version": "0.0.1",
+  "description": "write a sevrer for local html, learn node by the way",
+  "main": "index.js",
+  "author": "linjiuzhou <ljz@szltech.com>",
+  "license": "MIT"
+}
