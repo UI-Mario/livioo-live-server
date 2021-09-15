@@ -9,6 +9,5 @@
     "ws": "^8.2.2"
   },
   "devDependencies": {
-    "express": "^4.17.1"
   }
 }

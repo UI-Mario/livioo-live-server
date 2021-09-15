@@ -3,10 +3,7 @@ const path = require("path");
 const WebSocket = require("ws");
 var http = require("http");
 
-
-
 // ===================================inject===================================
-var originHTML = fs.readFileSync("test.html", "utf8");
 
 var INJECTED_CODE = fs.readFileSync(
   path.join(__dirname, "injected.html"),
@@ -29,6 +26,7 @@ const injectWebsocket = (originHTML, injectHTML) => {
 
   var injectTag = null;
   // find injectTag, don't need how position
+  // 突然感觉，比起map、find，for循环虽然朴实无华，但是让人安心
   for (var i = 0; i < injectCandidates.length; ++i) {
     const match = injectCandidates[i].exec(originHTML);
     if (match) {
@@ -55,14 +53,15 @@ const injectWebsocket = (originHTML, injectHTML) => {
 };
 
 // ===============================listen file change=============================
-// TODO: how do I restart the http server???
-
+// TODO: how do I restart the http server??? or how do I serve the changed html file after start server ??
+// FIXED: see https://stackoverflow.com/questions/69181965/create-a-web-server-for-local-html-using-node
 
 // =============================server=======================================
 
 // http
 http
   .createServer(function (req, res) {
+    var originHTML = fs.readFileSync("test.html", "utf8");
     res.writeHead(200, { "Content-Type": "html" });
     res.end(injectWebsocket(originHTML, INJECTED_CODE));
   })
@@ -70,11 +69,10 @@ http
     console.log("I'm listening...");
   });
 
-
 // websocket
 // TODO: how do i know websocket port in injectedhtml
 // or can port adjust default?
-const wss = new WebSocket.Server({ port: 8080 });
+const wss = new WebSocket.Server({ port: 9999 });
 wss.on("connection", (ws) => {
   ws.on("message", (message) => {
     console.log(`Received message => ${message}`);
