@@ -3,6 +3,12 @@ const path = require("path");
 const WebSocket = require("ws");
 var http = require("http");
 
+// ==================================params=================================
+
+const HTTP_PORT = 3000;
+const WEBSOCKET_PORT = 9999;
+const HTMLfilePath = path.resolve(__dirname, "./test.html");
+
 // ===================================inject===================================
 
 var INJECTED_CODE = fs.readFileSync(
@@ -15,7 +21,7 @@ var INJECTED_CODE = fs.readFileSync(
  * @param {string} injectHTML
  * @returns
  */
-const injectWebsocket = (originHTML, injectHTML) => {
+function injectWebsocket(originHTML, injectHTML) {
   var injectCandidates = [
     // RegExp(pattern, modifiers)
     // modifiers为i代表对大小写不敏感
@@ -50,7 +56,7 @@ const injectWebsocket = (originHTML, injectHTML) => {
   }
 
   return originHTML;
-};
+}
 
 // ===============================listen file change=============================
 // TODO: how do I restart the http server??? or how do I serve the changed html file after start server ??
@@ -58,27 +64,52 @@ const injectWebsocket = (originHTML, injectHTML) => {
 
 // =============================server=======================================
 
+const Server = {
+  start: null,
+  watcher: null,
+};
+
 // http
 http
   .createServer(function (req, res) {
-    var originHTML = fs.readFileSync("test.html", "utf8");
+    var originHTML = fs.readFileSync(HTMLfilePath, "utf8");
     res.writeHead(200, { "Content-Type": "html" });
     res.end(injectWebsocket(originHTML, INJECTED_CODE));
   })
-  .listen(3000, () => {
+  .listen(HTTP_PORT, function () {
     console.log("I'm listening...");
   });
 
 // websocket
 // TODO: how do i know websocket port in injectedhtml
 // or can port adjust default?
-const wss = new WebSocket.Server({ port: 9999 });
-wss.on("connection", (ws) => {
-  ws.on("message", (message) => {
+const wss = new WebSocket.Server({ port: WEBSOCKET_PORT });
+wss.on("connection", function (ws) {
+  ws.on("message", function (message) {
     console.log(`Received message => ${message}`);
   });
   ws.send("ho!");
-  ws.on("close", (c, d) => {
+  watcher(HTMLfilePath, {}, function() {
+    // 
+    ws.send('reload')
+  })
+  ws.on("close", function (c, d) {
     console.log("disconnect " + c + " -- " + d);
   });
 });
+
+// watcher
+
+function watcher(path, options, callback) {
+  fs.watch(path, options, function (eventName, fileName) {
+    if (fileName) {
+      console.log("Event : " + eventName);
+      console.log(fileName + " file Changed ...");
+      // TODO:这回考验的是模块拆分or架构？
+      // 怎么使用websocket比较合理呢
+      callback();
+    } else {
+      console.log("filename not provided or check file access permissions");
+    }
+  });
+}
