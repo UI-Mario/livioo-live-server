@@ -5,9 +5,11 @@ var http = require("http");
 
 // ==================================params=================================
 
-const HTTP_PORT = 3000;
-const WEBSOCKET_PORT = 9999;
-const HTMLfilePath = path.resolve(__dirname, "./test.html");
+const defaultOptions = {
+  port: 3000,
+  websocketPort: 9999,
+  htmlPath: path.resolve(__dirname, "./test.html"),
+};
 
 // ===================================inject===================================
 
@@ -61,42 +63,49 @@ function injectWebsocket(originHTML, injectHTML) {
 // ===============================listen file change=============================
 // TODO: how do I restart the http server??? or how do I serve the changed html file after start server ??
 // FIXED: see https://stackoverflow.com/questions/69181965/create-a-web-server-for-local-html-using-node
+// see watcher
 
 // =============================server=======================================
 
 const Server = {
-  start: null,
-  watcher: null,
+  start(options) {
+    const { port, websocketPort, htmlPath } = options;
+    startHTTP(htmlPath, port);
+    startWebSocket(htmlPath, websocketPort);
+  }
 };
 
 // http
-http
-  .createServer(function (req, res) {
-    var originHTML = fs.readFileSync(HTMLfilePath, "utf8");
-    res.writeHead(200, { "Content-Type": "html" });
-    res.end(injectWebsocket(originHTML, INJECTED_CODE));
-  })
-  .listen(HTTP_PORT, function () {
-    console.log("I'm listening...");
-  });
+function startHTTP(htmlPath, port) {
+  http
+    .createServer(function (req, res) {
+      var originHTML = fs.readFileSync(htmlPath, "utf8");
+      res.writeHead(200, { "Content-Type": "html" });
+      res.end(injectWebsocket(originHTML, INJECTED_CODE));
+    })
+    .listen(port, function () {
+      console.log("I'm listening...");
+    });
+}
 
 // websocket
 // TODO: how do i know websocket port in injectedhtml
 // or can port adjust default?
-const wss = new WebSocket.Server({ port: WEBSOCKET_PORT });
-wss.on("connection", function (ws) {
-  ws.on("message", function (message) {
-    console.log(`Received message => ${message}`);
+function startWebSocket(htmlPath, port) {
+  const wss = new WebSocket.Server({ port });
+  wss.on("connection", function (ws) {
+    ws.on("message", function (message) {
+      console.log(`Received message => ${message}`);
+    });
+    watcher(htmlPath, {}, function () {
+      //
+      ws.send("reload");
+    });
+    ws.on("close", function (c, d) {
+      console.log("disconnect " + c + " -- " + d);
+    });
   });
-  ws.send("ho!");
-  watcher(HTMLfilePath, {}, function() {
-    // 
-    ws.send('reload')
-  })
-  ws.on("close", function (c, d) {
-    console.log("disconnect " + c + " -- " + d);
-  });
-});
+}
 
 // watcher
 
@@ -113,3 +122,7 @@ function watcher(path, options, callback) {
     }
   });
 }
+
+Server.start(defaultOptions)
+
+module.exports = Server
