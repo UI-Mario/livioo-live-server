@@ -123,6 +123,4 @@ function watcher(path, options, callback) {
   });
 }
 
-Server.start(defaultOptions)
-
 module.exports = Server

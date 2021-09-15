@@ -2,6 +2,7 @@
 
 const program = require("commander");
 const pkg = require("./package.json");
+const server = require('./index.js');
 
 // tips: generate ascii-img from http://patorjk.com/software/taag
 const ASCII_IMG = String.raw`
@@ -15,33 +16,24 @@ const ASCII_IMG = String.raw`
 console.log(ASCII_IMG);
 
 const options = {
-  host: null,
   port: null,
-  HTMLfilePath: null,
+  websocketPort: 9999,
+  htmlPath: "./index.html",
 };
 
 program
   .version(pkg.version)
   .usage("[options] <file ...>")
-  .option("-i, --integer <n>", "An integer argument", function (val) {
-    console.log(val);
-  })
   .option("-l, --list", "A list", function () {
     console.log(123);
   })
-  .option("-o, --optional", "An optional value", function () {
-    console.log(456);
+  .option("-p, --port [value]", "the port server runs on", function (val) {
+      const port = parseInt(val)
+      options.port = port
   })
-  .option("--port <n>", "the port server run on", function (val) {
-    options.port = val;
+  .option("--entry-file [value]", "the port server runs on", function (val) {
+    options.htmlPath = val
   })
-  .option(
-    "-c, --collect [value]",
-    "A repeatable value",
-    function (val, memo) {
-      memo.push(val);
-      return memo;
-    },
-    []
-  )
   .parse(process.argv);
+
+server.start(options)
