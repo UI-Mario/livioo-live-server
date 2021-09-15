@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "write a sevrer for local html, learn node by the way",
   "main": "index.js",
-  "author": "linjiuzhou <ljz@szltech.com>",
+  "author": "UI-Mario jz.livioo@gmail.com",
   "license": "MIT",
   "dependencies": {
     "commander": "^8.2.0",
