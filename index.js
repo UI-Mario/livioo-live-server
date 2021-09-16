@@ -81,24 +81,61 @@ const Server = {
 // 2. 光用http module写起来太繁琐，express倒是简单，但又涉及到之前逻辑重写
 function startHTTP(htmlPath, port, staticDir) {
   http
-    .createServer(function (req, res) {
+    .createServer(function (request, response) {
       // static
       // 如何把资源serve的路径映射成本地文件路径一致?
       // 新的问题，这些资源的改变是否会涉及到页面重新加载?
       // const fileServer = new static.Server(staticDir)
       // fileServer.serve(req, res);
       // html
-      if (req.url.match(/\/public/)) {
-        const fileServer = new static.Server(staticDir);
-        req
-          .addListener("end", function () {
-            fileServer.serve(req, res);
-          })
-          .resume();
+      const keyword = new RegExp(path.parse(staticDir).base);
+      if (request.url.match(keyword)) {
+        var filePath = "." + request.url;
+
+        var extname = String(path.extname(filePath)).toLowerCase();
+        var mimeTypes = {
+          ".html": "text/html",
+          ".js": "text/javascript",
+          ".css": "text/css",
+          ".json": "application/json",
+          ".png": "image/png",
+          ".jpg": "image/jpg",
+          ".gif": "image/gif",
+          ".svg": "image/svg+xml",
+          ".wav": "audio/wav",
+          ".mp4": "video/mp4",
+          ".woff": "application/font-woff",
+          ".ttf": "application/font-ttf",
+          ".eot": "application/vnd.ms-fontobject",
+          ".otf": "application/font-otf",
+          ".wasm": "application/wasm",
+        };
+
+        var contentType = mimeTypes[extname] || "application/octet-stream";
+        fs.readFile(filePath, function (error, content) {
+          if (error) {
+            if (error.code == "ENOENT") {
+              fs.readFile("./404.html", function (error, content) {
+                response.writeHead(404, { "Content-Type": "text/html" });
+                response.end("404", "utf-8");
+              });
+            } else {
+              response.writeHead(500);
+              response.end(
+                "Sorry, check with the site admin for error: " +
+                  error.code +
+                  " ..\n"
+              );
+            }
+          } else {
+            response.writeHead(200, { "Content-Type": contentType });
+            response.end(content, "utf-8");
+          }
+        });
       } else {
         var originHTML = fs.readFileSync(htmlPath, "utf8");
-        res.writeHead(200, { "Content-Type": "html" });
-        res.end(injectWebsocket(originHTML, INJECTED_CODE));
+        response.writeHead(200, { "Content-Type": "html" });
+        response.end(injectWebsocket(originHTML, INJECTED_CODE));
       }
     })
     .listen(port, function () {

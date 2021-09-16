@@ -1,13 +1,12 @@
 {
   "name": "livioo-live-server",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "write a sevrer for local html, learn node by the way",
   "main": "index.js",
   "author": "UI-Mario jz.livioo@gmail.com",
   "license": "MIT",
   "dependencies": {
     "commander": "^8.2.0",
-    "node-static": "^0.7.11",
     "ws": "^8.2.2"
   },
   "devDependencies": {},
