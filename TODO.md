@@ -6,3 +6,4 @@ TODO:
 
 - refresh part of resources instead of wholepage
 - listen more than a file
+- resources/static server

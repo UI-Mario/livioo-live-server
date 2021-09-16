@@ -76,6 +76,9 @@ const Server = {
 };
 
 // http
+// TODO:有考虑为image等static resource创建server，但是
+// 1. 静态资源路径的不确定性
+// 2. 光用http module写起来太繁琐，express倒是简单，但又涉及到之前逻辑重写
 function startHTTP(htmlPath, port) {
   http
     .createServer(function (req, res) {
@@ -108,7 +111,6 @@ function startWebSocket(htmlPath, port) {
 }
 
 // watcher
-
 function watcher(path, options, callback) {
   fs.watch(path, options, function (eventName, fileName) {
     if (fileName) {
