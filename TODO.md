@@ -18,3 +18,8 @@ TODO:
   - new question: How to map the path of the website resources to the appropriate local file path:white_check_mark:
   - shorthand: can't show real-time resources when resources change on serving
   - shorthand: now must give absolute resource path:white_check_mark:
+
+Basic:
+  - git commit format
+  - test
+  - ci
