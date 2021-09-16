@@ -1,15 +1,15 @@
 const fs = require("fs");
 const path = require("path");
 const WebSocket = require("ws");
-var http = require("http");
+const static = require("node-static");
+const http = require("http");
 
 // ==================================params=================================
 
-const defaultOptions = {
-  port: 3000,
-  websocketPort: 9999,
-  htmlPath: path.resolve(__dirname, "./test.html"),
-};
+// port: 3000,
+// websocketPort: 9999,
+// htmlPath: path.resolve(__dirname, "./test.html"),
+// staticDir: './public'
 
 // ===================================inject===================================
 
@@ -69,22 +69,37 @@ function injectWebsocket(originHTML, injectHTML) {
 
 const Server = {
   start(options) {
-    const { port, websocketPort, htmlPath } = options;
-    startHTTP(htmlPath, port);
+    const { port, websocketPort, htmlPath, staticDir } = options;
+    startHTTP(htmlPath, port, staticDir);
     startWebSocket(htmlPath, websocketPort);
-  }
+  },
 };
 
 // http
 // TODO:有考虑为image等static resource创建server，但是
 // 1. 静态资源路径的不确定性
 // 2. 光用http module写起来太繁琐，express倒是简单，但又涉及到之前逻辑重写
-function startHTTP(htmlPath, port) {
+function startHTTP(htmlPath, port, staticDir) {
   http
     .createServer(function (req, res) {
-      var originHTML = fs.readFileSync(htmlPath, "utf8");
-      res.writeHead(200, { "Content-Type": "html" });
-      res.end(injectWebsocket(originHTML, INJECTED_CODE));
+      // static
+      // 如何把资源serve的路径映射成本地文件路径一致?
+      // 新的问题，这些资源的改变是否会涉及到页面重新加载?
+      // const fileServer = new static.Server(staticDir)
+      // fileServer.serve(req, res);
+      // html
+      if (req.url.match(/\/public/)) {
+        const fileServer = new static.Server(staticDir);
+        req
+          .addListener("end", function () {
+            fileServer.serve(req, res);
+          })
+          .resume();
+      } else {
+        var originHTML = fs.readFileSync(htmlPath, "utf8");
+        res.writeHead(200, { "Content-Type": "html" });
+        res.end(injectWebsocket(originHTML, INJECTED_CODE));
+      }
     })
     .listen(port, function () {
       console.log(`listening on http://localhost:${port}`);
@@ -125,4 +140,4 @@ function watcher(path, options, callback) {
   });
 }
 
-module.exports = Server
+module.exports = Server;

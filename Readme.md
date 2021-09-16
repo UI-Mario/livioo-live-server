@@ -22,6 +22,7 @@ You can config options to achieve what you want, these are options currently sup
 
 - `-p, --port`, the port server runs on, default 3000
 - `--entry-file`, the html to be served, default index.html, not support dir yet
+- `--static-dir`, the resources dir to be served, must be an **absolute** path
 - to be continue...
 
 ## Repo

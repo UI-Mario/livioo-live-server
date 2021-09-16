@@ -13,12 +13,15 @@ const ASCII_IMG = String.raw`
 /_____/_/ |___/_/\____/  /____/\___/_/    |___/\___/_/
 `;
 
+
 console.log(ASCII_IMG);
 
 const options = {
   port: 3000,
   websocketPort: 9999,
   htmlPath: "./index.html",
+  // FIXME: absolute path
+  staticDir: "./public"
 };
 
 program
@@ -33,6 +36,9 @@ program
   })
   .option("--entry-file [value]", "the port server runs on", function (val) {
     options.htmlPath = val
+  })
+  .option("--static-dir [value]", "the static resources absolute dir path", function (val) {
+    options.staticDir = val
   })
   .parse(process.argv);
 
