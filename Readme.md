@@ -4,6 +4,10 @@
 
 a simple web server inspired by [live-server](https://www.npmjs.com/package/live-server)
 
+difference from `live-server`:
+
+- can use local resources such as images in your html file
+
 ## Install
 
 ```js
