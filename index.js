@@ -87,7 +87,7 @@ function startHTTP(htmlPath, port) {
       res.end(injectWebsocket(originHTML, INJECTED_CODE));
     })
     .listen(port, function () {
-      console.log("I'm listening...");
+      console.log(`listening on http://localhost:${port}`);
     });
 }
 

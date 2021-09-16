@@ -16,7 +16,7 @@ const ASCII_IMG = String.raw`
 console.log(ASCII_IMG);
 
 const options = {
-  port: null,
+  port: 3000,
   websocketPort: 9999,
   htmlPath: "./index.html",
 };
