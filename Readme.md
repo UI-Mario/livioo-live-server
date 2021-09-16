@@ -1,5 +1,9 @@
 # livioo-live-server
 
+[![Npm](https://img.shields.io/npm/v/livioo-live-server)](https://www.npmjs.com/package/livioo-live-server)
+[![Npm](https://img.shields.io/npm/dm/livioo-live-server)](https://www.npmjs.com/package/livioo-live-server)
+[![License](https://img.shields.io/npm/l/livioo-live-server)](LICENSE)
+
 > Experimental
 
 a simple web server inspired by [live-server](https://www.npmjs.com/package/live-server)
