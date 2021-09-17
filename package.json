@@ -12,12 +12,15 @@
   "devDependencies": {
     "@commitlint/cli": "^13.1.0",
     "@commitlint/config-conventional": "^13.1.0",
-    "husky": "^7.0.0"
+    "husky": "^7.0.0",
+    "mocha": "^9.1.1"
   },
   "bin": {
     "livioo-live-server": "serve.js"
   },
   "scripts": {
-    "prepare": "husky install"
+    "pre-commit": "lint-staged",
+    "prepare": "husky install",
+    "test": "mocha"
   }
 }
