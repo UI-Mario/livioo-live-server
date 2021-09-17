@@ -18,12 +18,13 @@ TODO:
 
 - refresh part of resources instead of wholepage
 - listen more than a file
+- XMLHttpRequest/fetch cors
 - resources/static server :white_check_mark:
   - new question: How to map the path of the website resources to the appropriate local file path:white_check_mark:
   - shorthand: can't show real-time resources when resources change on serving
   - shorthand: now must give absolute resource path:white_check_mark:
 
 Basic:
-  - git commit format
+  - git commit format:white_check_mark:
   - test
-  - ci
+  - ci:white_check_mark:
