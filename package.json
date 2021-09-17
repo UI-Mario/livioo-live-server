@@ -1,6 +1,6 @@
 {
   "name": "livioo-live-server",
-  "version": "0.0.5",
+  "version": "0.0.4",
   "description": "write a sevrer for local html, learn node by the way",
   "main": "index.js",
   "author": "UI-Mario jz.livioo@gmail.com",
