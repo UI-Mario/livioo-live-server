@@ -2,7 +2,7 @@
 
 const program = require("commander");
 const pkg = require("./package.json");
-const server = require('./index.js');
+const server = require('./src/index.js');
 
 // tips: generate ascii-img from http://patorjk.com/software/taag
 const ASCII_IMG = String.raw`

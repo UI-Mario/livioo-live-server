@@ -10,6 +10,7 @@ jobs:
     - stage: Build and test
       script:
         - yarn test
+        - yarn build
     - stage: npm release
       deploy:
         provider: npm

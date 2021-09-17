@@ -20,6 +20,7 @@ TODO:
 - listen more than a file
 - XMLHttpRequest/fetch cors
 - use  typescript and build tool, it seems that the package is little big
+  - feel sick about so many \<any>
 - resources/static server :white_check_mark:
   - new question: How to map the path of the website resources to the appropriate local file path:white_check_mark:
   - shorthand: can't show real-time resources when resources change on serving
