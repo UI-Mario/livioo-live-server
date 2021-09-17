@@ -6,9 +6,13 @@ version 0.0.3
 
 - resources/static server :white_check_mark:, but there are questions
 
-version 0.0.3
+version 0.0.4
 
 - fix errors in 0.0.3
+
+version 0.0.6
+
+- add commitlint for project, use travis to test and deploy
 
 TODO: 
 
