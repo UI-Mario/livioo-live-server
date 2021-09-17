@@ -11,15 +11,15 @@ const http = require("http");
 // staticDir: './public'
 
 interface optionType {
-  port:number,
-  websocketPort:number,
-  htmlPath:string,
-  staticDir:string
+  port: number;
+  websocketPort: number;
+  htmlPath: string;
+  staticDir: string;
 }
 
 // ===================================inject===================================
 
-var INJECTED_CODE:string = fs.readFileSync(
+var INJECTED_CODE: string = fs.readFileSync(
   path.join(__dirname, "injected.html"),
   "utf8"
 );
@@ -29,9 +29,9 @@ var INJECTED_CODE:string = fs.readFileSync(
  * @param {string} injectHTML
  * @returns
  */
-function injectWebsocket(originHTML:string, injectHTML:string):string {
+function injectWebsocket(originHTML: string, injectHTML: string): string {
   // TODO: how do I declare array of RegExp
-  var injectCandidates:Array<any> = [
+  var injectCandidates: Array<RegExp> = [
     // RegExp(pattern, modifiers)
     // modifiers为i代表对大小写不敏感
     new RegExp("</body>", "i"),
@@ -75,10 +75,10 @@ function injectWebsocket(originHTML:string, injectHTML:string):string {
 // =============================server=======================================
 
 const Server = {
-  start(options:optionType) {
+  start(options: optionType) {
     const { port, websocketPort, htmlPath, staticDir } = options;
     startHTTP(htmlPath, port, staticDir);
-    startWebSocket(htmlPath, websocketPort);
+    startWebSocket(htmlPath, websocketPort, staticDir);
   },
 };
 
@@ -86,9 +86,9 @@ const Server = {
 // TODO:有考虑为image等static resource创建server，但是
 // 1. 静态资源路径的不确定性
 // 2. 光用http module写起来太繁琐，express倒是简单，但又涉及到之前逻辑重写
-function startHTTP(htmlPath:string, port:number, staticDir:string) {
+function startHTTP(htmlPath: string, port: number, staticDir: string) {
   http
-    .createServer(function (request:any, response:any) {
+    .createServer(function (request: any, response: any) {
       // static
       // 如何把资源serve的路径映射成本地文件路径一致?
       // 新的问题，这些资源的改变是否会涉及到页面重新加载?
@@ -99,8 +99,8 @@ function startHTTP(htmlPath:string, port:number, staticDir:string) {
       if (request.url.match(keyword)) {
         var filePath = "." + request.url;
 
-        var extname:string = String(path.extname(filePath)).toLowerCase();
-        var mimeTypes:any = {
+        var extname: string = String(path.extname(filePath)).toLowerCase();
+        var mimeTypes: any = {
           ".html": "text/html",
           ".js": "text/javascript",
           ".css": "text/css",
@@ -118,11 +118,12 @@ function startHTTP(htmlPath:string, port:number, staticDir:string) {
           ".wasm": "application/wasm",
         };
 
-        var contentType:string = mimeTypes[extname] || "application/octet-stream";
-        fs.readFile(filePath, function (error:any, content:any) {
+        var contentType: string =
+          mimeTypes[extname] || "application/octet-stream";
+        fs.readFile(filePath, function (error: any, content: any) {
           if (error) {
             if (error.code == "ENOENT") {
-              fs.readFile("./404.html", function (error:Error) {
+              fs.readFile("./404.html", function (error: Error) {
                 response.writeHead(404, { "Content-Type": "text/html" });
                 response.end("404", "utf-8");
               });
@@ -153,25 +154,30 @@ function startHTTP(htmlPath:string, port:number, staticDir:string) {
 // websocket
 // TODO: how do i know websocket port in injectedhtml
 // or can port adjust default?
-function startWebSocket(htmlPath:string, port:number) {
+function startWebSocket(htmlPath: string, port: number, staticDir: string) {
   const wss = new WebSocket.Server({ port });
-  wss.on("connection", function (ws:any) {
-    ws.on("message", function (message:string) {
+  wss.on("connection", function (ws: any) {
+    ws.on("message", function (message: string) {
       console.log(`Received message => ${message}`);
     });
+    // html file watch
     watcher(htmlPath, {}, function () {
       //
       ws.send("reload");
     });
-    ws.on("close", function (c:string, d:string) {
+    // assets watch
+    watcher(staticDir, {}, function () {
+      ws.send("reload");
+    })
+    ws.on("close", function (c: string, d: string) {
       console.log("disconnect " + c + " -- " + d);
     });
   });
 }
 
 // watcher
-function watcher(path:string, options:object, callback:() => void) {
-  fs.watch(path, options, function (eventName:string, fileName:string) {
+function watcher(path: string, options: object, callback: () => void) {
+  fs.watch(path, options, function (eventName: string, fileName: string) {
     if (fileName) {
       console.log("Event : " + eventName);
       console.log(fileName + " file Changed ...");
