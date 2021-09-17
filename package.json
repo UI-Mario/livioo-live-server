@@ -9,8 +9,15 @@
     "commander": "^8.2.0",
     "ws": "^8.2.2"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@commitlint/cli": "^13.1.0",
+    "@commitlint/config-conventional": "^13.1.0",
+    "husky": "^7.0.0"
+  },
   "bin": {
     "livioo-live-server": "serve.js"
+  },
+  "scripts": {
+    "prepare": "husky install"
   }
 }
