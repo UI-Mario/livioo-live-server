@@ -1,7 +1,6 @@
 const fs = require("fs");
 const path = require("path");
 const WebSocket = require("ws");
-const static = require("node-static");
 const http = require("http");
 
 // ==================================params=================================
