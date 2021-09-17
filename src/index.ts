@@ -118,7 +118,7 @@ function startHTTP(htmlPath:string, port:number, staticDir:string) {
           ".wasm": "application/wasm",
         };
 
-        var contentType = mimeTypes[extname] || "application/octet-stream";
+        var contentType:string = mimeTypes[extname] || "application/octet-stream";
         fs.readFile(filePath, function (error:any, content:any) {
           if (error) {
             if (error.code == "ENOENT") {

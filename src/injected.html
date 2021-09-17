@@ -1,0 +1,17 @@
+<!-- 为了实现server和html的通信，inject websocket -->
+<!-- TODO:比较好奇的是，为什么live-server里面会专门去找svg标签嵌进去呢，div也行啊 -->
+<script type="text/javascript">
+  // window.location.reload, doesn't know how to refresh css only
+  const adress = "ws:" + "//" + window.location.hostname + ":" + 9999;
+  const socket = new WebSocket(adress);
+  socket.onopen = function (event) {
+    console.log("WebSocket is open now.");
+    socket.send('hello world')
+  };
+  socket.onmessage = function (msg) {
+    if (msg.data == "reload") window.location.reload();
+    else if (msg.data == "refreshcss") refreshCSS();
+    else console.log('message from server: ', msg.data)
+  };
+  console.log("livioo server is running...");
+</script>

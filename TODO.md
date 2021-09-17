@@ -21,6 +21,8 @@ TODO:
 - XMLHttpRequest/fetch cors
 - use  typescript and build tool, it seems that the package is little big
   - feel sick about so many \<any>
+  - inject.html should be put in src, but can tsc do copy assets? don't want to use rollup yet
+  - when code in .ts like import a ts file, after compile the import is still a ts file(should be js)
 - resources/static server :white_check_mark:
   - new question: How to map the path of the website resources to the appropriate local file path:white_check_mark:
   - shorthand: can't show real-time resources when resources change on serving

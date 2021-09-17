@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 const program = require("commander");
-const pkg = require("./package.json");
-const server = require('./src/index.js');
+const pkg = require("../package.json");
+const server = require('./index');
 
 // tips: generate ascii-img from http://patorjk.com/software/taag
 const ASCII_IMG = String.raw`
@@ -30,14 +30,14 @@ program
   .option("-l, --list", "A list", function () {
     console.log(123);
   })
-  .option("-p, --port [value]", "the port server runs on", function (val) {
+  .option("-p, --port [value]", "the port server runs on", function (val: string) {
       const port = parseInt(val)
       options.port = port
   })
-  .option("--entry-file [value]", "the port server runs on", function (val) {
+  .option("--entry-file [value]", "the port server runs on", function (val: string) {
     options.htmlPath = val
   })
-  .option("--static-dir [value]", "the static resources absolute dir path", function (val) {
+  .option("--static-dir [value]", "the static resources absolute dir path", function (val: string) {
     options.staticDir = val
   })
   .parse(process.argv);
