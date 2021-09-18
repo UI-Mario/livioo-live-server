@@ -5,19 +5,14 @@ import path from "path";
 import WebSocket from "ws";
 import http from "http";
 
+import { optionType } from './type'
+
 // ==================================params=================================
 
 // port: 3000,
 // websocketPort: 9999,
 // htmlPath: path.resolve(__dirname, "./test.html"),
 // staticDir: './public'
-
-interface optionType {
-  port: number;
-  websocketPort: number;
-  htmlPath: string;
-  staticDir: string;
-}
 
 // ===================================inject===================================
 
