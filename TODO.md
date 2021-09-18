@@ -14,10 +14,14 @@ version 0.0.6
 
 - add commitlint for project, use travis to test and deploy
 
+version 0.0.7
+
+- use typescript refactor project, add assets change listen
+
 TODO: 
 
 - refresh part of resources instead of wholepage
-- listen more than a file
+- listen more than a file:white_check_mark:
 - XMLHttpRequest/fetch cors
 - use  typescript and build tool, it seems that the package is little big
   - feel sick about so many \<any>
