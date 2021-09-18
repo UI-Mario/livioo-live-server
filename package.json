@@ -1,6 +1,6 @@
 {
   "name": "livioo-live-server",
-  "version": "0.0.7-beta6",
+  "version": "0.0.7-beta8",
   "description": "write a sevrer for local html, learn node by the way",
   "main": "index.js",
   "author": "UI-Mario jz.livioo@gmail.com",
@@ -12,7 +12,9 @@
   "devDependencies": {
     "@commitlint/cli": "^13.1.0",
     "@commitlint/config-conventional": "^13.1.0",
+    "@types/commander": "^2.12.2",
     "@types/node": "^16.9.2",
+    "@types/ws": "^7.4.7",
     "copyfiles": "^2.4.1",
     "husky": "^7.0.0",
     "mocha": "^9.1.1",

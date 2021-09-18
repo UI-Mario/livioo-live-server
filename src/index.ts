@@ -1,7 +1,9 @@
-const fs = require("fs");
-const path = require("path");
-const WebSocket = require("ws");
-const http = require("http");
+import { IncomingMessage, ServerResponse } from "node:http";
+
+import fs from "fs";
+import path from "path";
+import WebSocket from "ws";
+import http from "http";
 
 // ==================================params=================================
 
@@ -88,7 +90,10 @@ const Server = {
 // 2. 光用http module写起来太繁琐，express倒是简单，但又涉及到之前逻辑重写
 function startHTTP(htmlPath: string, port: number, staticDir: string) {
   http
-    .createServer(function (request: any, response: any) {
+    .createServer(function (
+      request: IncomingMessage,
+      response: ServerResponse
+    ) {
       // static
       // 如何把资源serve的路径映射成本地文件路径一致?
       // 新的问题，这些资源的改变是否会涉及到页面重新加载?
@@ -96,7 +101,7 @@ function startHTTP(htmlPath: string, port: number, staticDir: string) {
       // fileServer.serve(req, res);
       // html
       const keyword = new RegExp(path.parse(staticDir).base);
-      if (request.url.match(keyword)) {
+      if (request?.url?.match(keyword)) {
         var filePath = "." + request.url;
 
         var extname: string = String(path.extname(filePath)).toLowerCase();
@@ -120,26 +125,35 @@ function startHTTP(htmlPath: string, port: number, staticDir: string) {
 
         var contentType: string =
           mimeTypes[extname] || "application/octet-stream";
-        fs.readFile(filePath, function (error: any, content: any) {
-          if (error) {
-            if (error.code == "ENOENT") {
-              fs.readFile("./404.html", function (error: Error) {
-                response.writeHead(404, { "Content-Type": "text/html" });
-                response.end("404", "utf-8");
-              });
+        fs.readFile(
+          filePath,
+          function (error: NodeJS.ErrnoException | null, content: Buffer) {
+            if (error) {
+              if (error.code == "ENOENT") {
+                fs.readFile(
+                  "./404.html",
+                  function (error: NodeJS.ErrnoException | null) {
+                    if (error) {
+                      console.log(`no 404 provided, read ${filePath} error`);
+                    }
+                    response.writeHead(404, { "Content-Type": "text/html" });
+                    response.end("404", "utf-8");
+                  }
+                );
+              } else {
+                response.writeHead(500);
+                response.end(
+                  "Sorry, check with the site admin for error: " +
+                    error.code +
+                    " ..\n"
+                );
+              }
             } else {
-              response.writeHead(500);
-              response.end(
-                "Sorry, check with the site admin for error: " +
-                  error.code +
-                  " ..\n"
-              );
+              response.writeHead(200, { "Content-Type": contentType });
+              response.end(content, "utf-8");
             }
-          } else {
-            response.writeHead(200, { "Content-Type": contentType });
-            response.end(content, "utf-8");
           }
-        });
+        );
       } else {
         var originHTML = fs.readFileSync(htmlPath, "utf8");
         response.writeHead(200, { "Content-Type": "html" });
@@ -156,7 +170,7 @@ function startHTTP(htmlPath: string, port: number, staticDir: string) {
 // or can port adjust default?
 function startWebSocket(htmlPath: string, port: number, staticDir: string) {
   const wss = new WebSocket.Server({ port });
-  wss.on("connection", function (ws: any) {
+  wss.on("connection", function (ws: WebSocket) {
     ws.on("message", function (message: string) {
       console.log(`Received message => ${message}`);
     });
@@ -168,7 +182,7 @@ function startWebSocket(htmlPath: string, port: number, staticDir: string) {
     // assets watch
     watcher(staticDir, {}, function () {
       ws.send("reload");
-    })
+    });
     ws.on("close", function (c: string, d: string) {
       console.log("disconnect " + c + " -- " + d);
     });
@@ -177,17 +191,27 @@ function startWebSocket(htmlPath: string, port: number, staticDir: string) {
 
 // watcher
 function watcher(path: string, options: object, callback: () => void) {
-  fs.watch(path, options, function (eventName: string, fileName: string) {
-    if (fileName) {
-      console.log("Event : " + eventName);
-      console.log(fileName + " file Changed ...");
-      // TODO:这回考验的是模块拆分or架构？
-      // 怎么使用websocket比较合理呢
-      callback();
+  // FIXME: it will throw error when no dir found(Error: ENOENT: no such file or directory)
+  // this make me don't want to use it
+  try {
+    fs.watch(path, options, function (eventName: string, fileName: string) {
+      if (fileName) {
+        console.log("Event : " + eventName);
+        console.log(fileName + " file Changed ...");
+        // TODO:这回考验的是模块拆分or架构？
+        // 怎么使用websocket比较合理呢
+        callback();
+      } else {
+        console.log("filename not provided or check file access permissions");
+      }
+    });
+  } catch (error: any) {
+    if (error.code == "ENOENT") {
+      console.log(`Oops, no file or dir provided ${path}`);
     } else {
-      console.log("filename not provided or check file access permissions");
+      console.log("there is an error when watch file", error);
     }
-  });
+  }
 }
 
-module.exports = Server;
+export default Server;
