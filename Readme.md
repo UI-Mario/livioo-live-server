@@ -28,7 +28,8 @@ livioo-live-server
 
 You can config options to achieve what you want, these are options currently support
 
-- `-p, --port`, the port server runs on, default 3000
+- `-v, --version`, the version of package
+- `--port`, the port server runs on, default 3000, use like "livioo-live-server --port 1233"
 - `--entry-file`, the html to be served, default index.html, not support dir yet
 - `--static-dir`, the resources dir to be served, default public
 - to be continue...

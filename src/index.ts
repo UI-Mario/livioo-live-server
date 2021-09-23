@@ -89,6 +89,10 @@ function startHTTP(htmlPath: string, port: number, staticDir: string) {
       request: IncomingMessage,
       response: ServerResponse
     ) {
+      // FIXME：不好的一点在于，我把请求蛮横的分成了两类
+      // 一类是所需的资源文件，类型还得手写
+      // 另外则全部默认是展示的html文件
+
       // static
       // 如何把资源serve的路径映射成本地文件路径一致?
       // 新的问题，这些资源的改变是否会涉及到页面重新加载?
