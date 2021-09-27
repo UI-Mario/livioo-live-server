@@ -16,6 +16,8 @@ jobs:
         #     - chmod a+rwx /home/travis/build/UI-Mario/livioo-live-server/
     - stage: Build and test
     # 对于master分支每个push都跑下面的俩命令
+      before_script: 
+        - chmod 0555 ./node_modules/.bin/mocha
       script:
         - yarn build
         - yarn test
