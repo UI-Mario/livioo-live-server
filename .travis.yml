@@ -8,10 +8,11 @@ install:
 jobs:
   include:
     - stage: Give permissions
-        - sudo chmod a+rwx /home/travis/build/UI-Mario/livioo-live-server/
+        - chmod a+rwx /home/travis/build/UI-Mario/livioo-live-server/
     - stage: Build and test
     # 对于master分支每个push都跑下面的俩命令
       script:
+        - chmod a+rwx /home/travis/build/UI-Mario/livioo-live-server/
         - yarn build
         - yarn test
     - stage: npm release
