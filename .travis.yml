@@ -8,6 +8,8 @@ install:
 jobs:
   include:
     - stage: Give permissions
+        # stupid travis
+        # waste lot of time to give permission for test
         - language: bash
           script: 
             - chmod a+rwx /home/travis/build/UI-Mario/livioo-live-server/
