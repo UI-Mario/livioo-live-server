@@ -7,7 +7,6 @@ install:
 
 jobs:
   include:
-    - stage: Give permissions
         # stupid travis
         # waste lot of time to give permission for test
         # this seems to be failed, even doesn't trigger travis
