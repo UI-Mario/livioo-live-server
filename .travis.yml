@@ -8,7 +8,7 @@ install:
 jobs:
   include:
     - stage: Give Permission
-        - sudo chmod a+rwx ./lib
+        - sudo chmod a+rwx ./
     - stage: Build and test
       script:
         - yarn test
