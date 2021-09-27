@@ -30,7 +30,7 @@
   "scripts": {
     "pre-commit": "lint-staged",
     "prepare": "husky install",
-    "test": "echo 123",
+    "test": "./node_modules/.bin/mocha",
     "copy-files": "copyfiles -u 1 src/**/*.html lib/",
     "build": "rm -rf lib/ && tsc && yarn copy-files"
   }
