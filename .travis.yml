@@ -7,11 +7,13 @@ install:
 
 jobs:
   include:
+    - stage: Give permissions
+        - sudo chmod a+rwx ./
     - stage: Build and test
     # 对于master分支每个push都跑下面的俩命令
       script:
         - yarn build
-        - sudo yarn test
+        - yarn test
     - stage: npm release
     # 只有tag才会被publish
       deploy:
